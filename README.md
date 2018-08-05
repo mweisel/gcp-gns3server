@@ -9,7 +9,7 @@ This project provides an automated deployment procedure for [gns3-server](https:
 
 ## Usage
 
-// Upcoming blog post at [Binary Nature](https://binarynature.blogspot.com)
+[GNS3 v2 with Google Compute Engine](http://binarynature.blogspot.com/2018/08/gns3-v2-google-compute-engine.html)
 
 ## License
 
