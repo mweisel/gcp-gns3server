@@ -1,0 +1,9 @@
+---
+# https://github.com/GNS3/gns3-server/releases
+gns3_ver:
+src_dir: "{{ ansible_env.HOME }}/src"
+
+# https://www.duckdns.org
+ddns_domain:
+ddns_token:
+...

@@ -1,0 +1,41 @@
+---
+- name: get and install libvirt, pip, and pkg-config
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libvirt-bin
+    - libvirt-dev
+    - python-pip
+    - pkg-config
+  become: yes
+
+- name: add gns3 user to libvirt system group
+  user:
+    name: gns3
+    groups: libvirt
+    append: yes
+  become: yes
+
+- name: get and install dependencies for virt_net ansible module
+  pip:
+    name: "{{ item }}"
+    executable: pip2
+    state: present
+  with_items:
+    - libvirt-python
+    - lxml
+  become: yes
+
+- name: start the default libvirt network
+  virt_net:
+    name: default
+    state: active
+  become: yes
+
+- name: autostart the default libvirt network at boot
+  virt_net:
+    name: default
+    autostart: yes
+  become: yes
+...

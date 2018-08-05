@@ -1,0 +1,36 @@
+---
+- name: get and install dependencies for docker
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+  become: yes
+
+- name: add docker gpg key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  become: yes
+
+- name: add docker apt repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    state: present
+  become: yes
+
+- name: install docker
+  apt:
+    name: docker-ce
+  become: yes
+
+- name: add gns3 user to docker system group
+  user:
+    name: gns3
+    groups: docker
+    append: yes
+  become: yes
+...

@@ -1,0 +1,23 @@
+---
+# https://console.cloud.google.com/iam-admin/settings/project
+# `gcloud config get-value project` to output Project ID value
+project:
+# https://cloud.google.com/compute/docs/regions-zones
+# `gcloud compute zones list` to list GCE zones
+zone:
+
+# https://cloud.google.com/free
+disk_name: gns3-disk
+disk_size: 30GB
+disk_type: pd-standard  # pd-ssd
+
+fr_name: default-allow-openvpn
+net_tag: gns3
+    
+vm_name: gns3server
+# https://cloud.google.com/compute/pricing
+vm_type:
+# https://cloud.google.com/compute/docs/cpu-platforms
+vm_cpu: 'Intel Skylake'  # 'Intel Haswell'
+vm_os: ubuntu-minimal-1804-lts
+...

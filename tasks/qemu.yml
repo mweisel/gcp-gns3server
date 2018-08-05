@@ -1,0 +1,17 @@
+---
+- name: get and install qemu
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - qemu
+    - qemu-kvm
+  become: yes
+
+- name: Add gns3 user to kvm system group
+  user:
+    name: gns3
+    groups: kvm
+    append: yes
+  become: yes
+...

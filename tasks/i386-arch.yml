@@ -1,0 +1,17 @@
+---
+- name: check if i386 arch is enabled
+  command: dpkg --print-foreign-architectures
+  register: i386_check
+  changed_when: i386_check.stdout.find('i386') == -1
+
+- name: enable i386 architecture
+  command: dpkg --add-architecture i386
+  become: yes
+  when: i386_check.changed
+
+- name: update apt cache for i386 arch addition
+  apt:
+    update_cache: yes
+  become: yes
+  when: i386_check.changed
+...

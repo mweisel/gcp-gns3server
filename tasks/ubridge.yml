@@ -1,0 +1,19 @@
+---
+- name: git clone ubridge (master branch)
+  git:
+    repo: https://github.com/GNS3/ubridge.git
+    dest: "{{ src_dir }}/ubridge"
+  register: ubridge_source
+
+- name: make ubridge
+  make:
+    chdir: "{{ src_dir }}/ubridge"
+  when: ubridge_source.changed
+
+- name: make install ubridge
+  make:
+    chdir: "{{ src_dir }}/ubridge"
+    target: install
+  become: yes
+  when: ubridge_source.changed
+...

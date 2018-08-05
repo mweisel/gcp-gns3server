@@ -1,0 +1,49 @@
+---
+- name: get and install dependencies for dynamips 
+  apt: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - libc6-dev-i386
+    - gcc-multilib
+    - libelf-dev:i386
+    - libelf-dev
+    - libpcap0.8-dev:i386
+    - libpcap0.8-dev
+    - cmake
+    - git
+  become: yes
+
+- name: git clone dynamips (master branch)
+  git:
+    repo: https://github.com/GNS3/dynamips.git
+    dest: "{{ src_dir }}/dynamips"
+  register: dynamips_source
+
+- name: create the build directory
+  file:
+    path: "{{ src_dir }}/dynamips/build"
+    state: directory
+  when: dynamips_source.changed
+
+- name: run cmake
+  command: cmake .. -DDYNAMIPS_ARCH=x86
+  args:
+    chdir: "{{ src_dir }}/dynamips/build"
+  when: dynamips_source.changed
+
+- name: make install dynamips
+  make:
+    chdir: "{{ src_dir }}/dynamips/build"
+    target: install
+  become: yes
+  when: dynamips_source.changed
+
+- name: set capabilities
+  capabilities:
+    path: /usr/local/bin/dynamips
+    capability: cap_net_admin,cap_net_raw=ep
+    state: present
+  become: yes
+  when: dynamips_source.changed
+...

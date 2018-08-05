@@ -1,0 +1,60 @@
+---
+- name: get and install openvpn package
+  apt:
+    name: openvpn
+    state: present
+  become: yes
+
+- name: generate secret key for openvpn
+  command: openvpn --genkey --secret secret.key
+  args:
+    chdir: /etc/openvpn/server
+    creates: /etc/openvpn/server/secret.key
+  notify:
+    - restart openvpn
+  become: yes
+
+- name: create openvpn server configuration file
+  copy:
+    src: ovpn_server.conf
+    dest: /etc/openvpn/server/server.conf
+  notify:
+    - restart openvpn
+  become: yes
+
+- name: enable and start openvpn service
+  service:
+    name: openvpn-server@server
+    enabled: yes
+    state: started
+  become: yes
+
+- name: create directory for openvpn client package
+  file:
+    path: "{{ ansible_env.HOME }}/openvpn-client"
+    state: directory
+    
+- name: create openvpn client configuration file
+  template:
+    src: gns3server.ovpn.j2
+    dest: "{{ ansible_env.HOME }}/openvpn-client/gns3server.ovpn"
+
+- name: copy secret.key to openvpn client package directory
+  copy:
+    src: /etc/openvpn/server/secret.key
+    dest: "{{ ansible_env.HOME }}/openvpn-client/secret.key"
+    remote_src: yes
+  become: yes
+
+- name: create openvpn client package
+  archive:
+    path: "{{ ansible_env.HOME }}/openvpn-client/*"
+    dest: "{{ ansible_env.HOME }}/gns3-openvpn.zip"
+    format: zip
+
+- name: fetch openvpn client package
+  fetch:
+    src: "{{ ansible_env.HOME }}/gns3-openvpn.zip"
+    dest: "{{ lookup('env','HOME') }}/gns3-openvpn.zip"
+    flat: yes
+...

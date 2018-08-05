@@ -1,0 +1,16 @@
+dev tun
+proto udp
+nobind
+compress lz4
+auth-nocache
+remote {{ ddns_domain }}.duckdns.org
+rport 1194
+
+secret secret.key 1
+ifconfig 172.16.253.2 172.16.253.1
+
+persist-tun
+persist-key
+keepalive 10 60
+
+verb 3
