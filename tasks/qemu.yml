@@ -8,7 +8,7 @@
     - qemu-kvm
   become: yes
 
-- name: Add gns3 user to kvm system group
+- name: add gns3 user to kvm system group
   user:
     name: gns3
     groups: kvm
