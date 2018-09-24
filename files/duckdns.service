@@ -1,6 +1,6 @@
 [Unit]
 Description=DuckDNS update job
-After=network.target
+After=network-online.target
 
 [Service]
 Type=oneshot
