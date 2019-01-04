@@ -1,17 +1,18 @@
 ---
 - name: get and install dependencies for dynamips 
   apt: 
-    name: "{{ item }}"
+    name: "{{ packages }}"
     state: present
-  with_items:
-    - libc6-dev-i386
-    - gcc-multilib
-    - libelf-dev:i386
-    - libelf-dev
-    - libpcap0.8-dev:i386
-    - libpcap0.8-dev
-    - cmake
-    - git
+  vars:
+    packages:
+      - libc6-dev-i386
+      - gcc-multilib
+      - libelf-dev:i386
+      - libelf-dev
+      - libpcap0.8-dev:i386
+      - libpcap0.8-dev
+      - cmake
+      - git
   become: yes
 
 - name: git clone dynamips (master branch)

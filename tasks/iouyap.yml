@@ -1,11 +1,12 @@
 ---
 - name: get and install dependencies for iouyap
   apt:
-    name: "{{ item }}"
+    name: "{{ packages }}"
     state: present
-  with_items:
-    - bison
-    - flex
+  vars:
+    packages:
+      - bison
+      - flex
   become: yes
 
 - name: git clone iniparser (master branch)
