@@ -20,5 +20,5 @@ vm_type:
 # https://cloud.google.com/compute/docs/cpu-platforms
 vm_cpu: 'Intel Skylake'  # 'Intel Haswell'
 # gcloud compute images list --filter="name~'ubuntu-minimal-1804'"
-vm_os: minimal
+vm_os: ubuntu-minimal-1804-lts
 ...
