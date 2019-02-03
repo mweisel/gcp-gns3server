@@ -62,7 +62,7 @@
         --min-cpu-platform "{{ vm_cpu }}"
         --disk name={{ disk_name }},boot=yes
         --tags {{ net_tag }}
-        --metadata startup-script='apt-get update && apt-get install -yq python-minimal'
+        --metadata startup-script='apt-get -qq update && apt-get -qq install python-minimal'
       when: server.rc != 0
 
     - name: pause to allow python2 install to complete
