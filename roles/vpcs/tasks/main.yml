@@ -1,0 +1,19 @@
+---
+- name: get and install svn
+  apt:
+    name: subversion
+    state: present
+  become: yes
+
+- name: check out working copy from repository
+  subversion:
+    repo: svn://svn.code.sf.net/p/vpcs/code/trunk
+    dest: "{{ src_dir }}/vpcs-code"
+    force: yes
+
+- name: perform source-based install
+  script: install_vpcs.sh
+  args:
+    chdir: "{{ src_dir }}/vpcs-code/src"
+    creates: /usr/local/bin/vpcs
+...

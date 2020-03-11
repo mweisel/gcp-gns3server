@@ -1,0 +1,52 @@
+---
+- name: provision gcp resources
+  hosts: localhost
+  gather_facts: no
+
+  vars_files:
+    - vars.yml
+
+  roles:
+    - role: gcp
+
+- name: deploy gns3 server
+  hosts: gns3
+
+  vars_files:
+    - vars.yml
+
+  pre_tasks:
+    - name: update apt cache
+      apt:
+        cache_valid_time: 3600
+      register: apt_result
+      until: apt_result is success
+      ignore_errors: yes
+      become: yes
+
+    - name: use command apt-get update if apt module fails
+      command: apt-get update
+      when: apt_result is failed
+      become: yes
+
+  roles:
+    - role: user
+    - role: duckdns
+    - role: wireguard 
+    - role: i386-arch
+    - role: dynamips
+    - role: vpcs
+    - role: iouyap 
+    - role: iol
+    - role: ubridge
+    - role: qemu-kvm
+    - role: pip3
+    - role: libvirt
+    - role: docker
+    - role: gns3
+
+  post_tasks:
+    - name: print wireguard public key 
+      debug:
+        var: public_key
+...

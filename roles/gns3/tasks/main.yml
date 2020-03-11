@@ -1,0 +1,44 @@
+---
+- name: get and install
+  pip:
+    name: gns3-server
+    version: "{{ gns3_version }}"
+    executable: pip3
+    state: present
+  notify:
+    - restart gns3
+  become: yes
+
+- name: create directory for configuration file
+  file:
+    path: /etc/xdg/GNS3
+    state: directory
+    owner: gns3
+    group: gns3
+  become: yes
+
+- name: create configuration file
+  copy:
+    src: gns3_server.conf
+    dest: /etc/xdg/GNS3/gns3_server.conf
+    owner: gns3
+    group: gns3
+  notify:
+    - restart gns3
+  become: yes
+
+- name: create systemd unit file
+  copy:
+    src: gns3.service
+    dest: /etc/systemd/system/gns3.service
+  notify:
+    - restart gns3
+  become: yes
+
+- name: enable and start service
+  systemd:
+    name: gns3
+    enabled: yes
+    state: started
+  become: yes
+...

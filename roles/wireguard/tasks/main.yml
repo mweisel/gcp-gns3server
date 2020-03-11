@@ -1,0 +1,106 @@
+---
+- name: get and install dependencies
+  apt:
+    name: "{{ wireguard_dep_packages }}"
+    state: present
+  become: yes
+
+- name: add wireguard apt repository
+  apt_repository:
+    repo: "ppa:wireguard/wireguard"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: get and install
+  package:
+    name: "{{ wireguard_packages }}"
+    state: present
+  become: yes
+
+- name: enable kernel module
+  modprobe:
+    name: wireguard
+    state: present
+  register: wireguard_module_enabled
+  until:  wireguard_module_enabled is success
+  failed_when: wireguard_module_enabled is failed
+  become: yes
+
+- name: register if config/private key already exists
+  stat:
+    path: "{{ wireguard_directory }}/{{ wireguard_interface }}.conf"
+  register: config_file_stat
+  become: yes
+
+- block:
+  - name: generate private key
+    command: wg genkey
+    register: wg_private_key_result
+
+  - name: set private key fact
+    set_fact:
+      private_key: "{{ wg_private_key_result.stdout }}"
+  when: not config_file_stat.stat.exists
+  become: yes
+
+- block:
+  - name: read configuration file
+    slurp:
+      src: "{{ wireguard_directory }}/{{ wireguard_interface }}.conf"
+    register: wg_config
+
+  - name: set private key fact
+    set_fact:
+      private_key: "{{ wg_config['content'] | b64decode | regex_findall('PrivateKey = (.*)') | first }}"
+  when: config_file_stat.stat.exists
+  become: yes
+
+- name: derive wireguard public key
+  shell: "echo '{{ private_key }}' | wg pubkey"
+  register: wg_public_key_result
+  changed_when: no
+  become: yes
+
+- name: set public key fact
+  set_fact:
+    public_key: "{{ wg_public_key_result.stdout }}"
+
+- name: create configuration directory
+  file:
+    dest: "{{ wireguard_directory }}"
+    state: directory
+    mode: 0700
+  become: yes
+
+- name: generate configuration file
+  template:
+    src: wg.conf.j2
+    dest: "{{ wireguard_directory }}/{{ wireguard_interface }}.conf"
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - reconfigure wireguard
+  become: yes
+
+- name: check if reload-module-on-update is set
+  stat:
+    path: "{{ wireguard_directory }}/.reload-module-on-update"
+  register: reload_module_on_update
+  become: yes
+
+- name: set reload-module-on-update
+  file:
+    dest: "{{ wireguard_directory }}/.reload-module-on-update"
+    state: touch
+  when: not reload_module_on_update.stat.exists
+  become: yes
+
+- name: enable and start service
+  systemd:
+    name: "wg-quick@{{ wireguard_interface }}"
+    state: started
+    enabled: yes
+  become: yes
+...

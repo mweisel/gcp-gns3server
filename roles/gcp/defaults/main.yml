@@ -1,0 +1,11 @@
+---
+gcp_disk_size: 30
+gcp_disk_type: pd-standard # pd-ssd
+# gcloud compute images list --filter="name~'ubuntu-minimal-1804'"
+gcp_disk_image: ubuntu-minimal-1804-lts
+gcp_vm_type: f1-micro
+# https://cloud.google.com/compute/docs/cpu-platforms
+gcp_vm_cpu: Intel Skylake
+gcp_vm_preemptible: no
+gcp_tag: gns3
+...

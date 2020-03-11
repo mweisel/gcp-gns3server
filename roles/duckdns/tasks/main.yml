@@ -1,0 +1,38 @@
+---
+- name: create script
+  copy:
+    src: duckdns.sh
+    dest: /usr/local/bin/duckdns
+  become: yes
+
+- name: set script as executable
+  file:
+    path: /usr/local/bin/duckdns
+    mode: 0755
+  become: yes
+
+- name: create systemd unit file
+  copy:
+    src: duckdns.service
+    dest: /etc/systemd/system/duckdns.service
+  become: yes
+
+- name: create configuration directory
+  file:
+    path: /etc/duckdns.d
+    state: directory
+  become: yes
+
+- name: create configuration file
+  template:
+    src: default.cfg.j2
+    dest: /etc/duckdns.d/default.cfg
+  become: yes
+
+- name: enable and start service
+  systemd:
+    name: duckdns
+    enabled: yes
+    state: started
+  become: yes
+...

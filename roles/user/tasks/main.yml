@@ -1,0 +1,13 @@
+---
+- name: create gns3 user
+  user:
+    name: gns3
+    home: /opt/gns3
+    system: yes
+  become: yes
+
+- name: create source code directory
+  file:
+    path: "{{ src_dir }}"
+    state: directory
+...

@@ -1,0 +1,13 @@
+---
+wireguard_interface: 'wg0'
+wireguard_address: '172.16.253.1/24' 
+wireguard_port: '51820'
+wireguard_allowed_ips: '172.16.253.0/24'
+wireguard_directory: '/etc/wireguard'
+wireguard_dep_packages:
+  - software-properties-common
+  - linux-headers-{{ ansible_kernel }}
+wireguard_packages:
+  - wireguard-dkms
+  - wireguard-tools 
+...

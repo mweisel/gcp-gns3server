@@ -1,0 +1,9 @@
+[Interface]
+PrivateKey = {{ private_key }}
+Address = {{ wireguard_address }}
+ListenPort = {{ wireguard_port }}
+SaveConfig = true
+
+[Peer]
+PublicKey = {{ wireguard_peer_pubkey }}
+AllowedIPs = {{ wireguard_allowed_ips }}

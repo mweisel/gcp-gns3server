@@ -1,0 +1,7 @@
+---
+- name: get and install
+  apt:
+    name: "{{ packages }}"
+    state: present
+  become: yes
+...

@@ -1,0 +1,53 @@
+---
+- name: get and install dependencies
+  apt:
+    name: "{{ packages }}"
+    state: present
+  become: yes
+
+- name: git clone iniparser (master branch)
+  git:
+    repo: http://github.com/ndevilla/iniparser.git
+    dest: "{{ src_dir }}/iniparser"
+  register: iniparser_source
+
+- name: make iniparser
+  make:
+    chdir: "{{ src_dir }}/iniparser"
+  when: iniparser_source is changed
+
+- name: copy files
+  copy:
+    src: "{{ item.file }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+  loop:
+    - file: "{{ src_dir }}/iniparser/libiniparser.a"
+      dest: /usr/lib/libiniparser.a
+    - file: "{{ src_dir }}/iniparser/libiniparser.so.1"
+      dest: /usr/lib/libiniparser.so.1
+    - file: "{{ src_dir }}/iniparser/src/iniparser.h"
+      dest: /usr/local/include/iniparser.h
+    - file: "{{ src_dir }}/iniparser/src/dictionary.h"
+      dest: /usr/local/include/dictionary.h
+  become: yes
+
+- name: git clone iouyap (master branch)
+  git:
+    repo: https://github.com/GNS3/iouyap.git
+    dest: "{{ src_dir }}/iouyap"
+    force: yes
+  register: iouyap_source
+
+- block:
+  - name: make iouyap
+    make:
+      chdir: "{{ src_dir }}/iouyap"
+
+  - name: make install iouyap
+    make:
+      chdir: "{{ src_dir }}/iouyap"
+      target: install
+    become: yes
+  when: iouyap_source is changed
+...

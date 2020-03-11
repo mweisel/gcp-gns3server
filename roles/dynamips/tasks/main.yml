@@ -1,0 +1,38 @@
+---
+- name: get and install dependencies
+  apt: 
+    name: "{{ packages }}"
+    state: present
+  become: yes
+
+- name: git clone (master branch)
+  git:
+    repo: https://github.com/GNS3/dynamips.git
+    dest: "{{ src_dir }}/dynamips"
+  register: dynamips_source
+
+- block:
+  - name: create build directory
+    file:
+      path: "{{ src_dir }}/dynamips/build"
+      state: directory
+
+  - name: run cmake
+    command: cmake .. -DDYNAMIPS_ARCH=x86
+    args:
+      chdir: "{{ src_dir }}/dynamips/build"
+
+  - name: make install
+    make:
+      chdir: "{{ src_dir }}/dynamips/build"
+      target: install
+    become: yes
+
+  - name: set capabilities
+    capabilities:
+      path: /usr/local/bin/dynamips
+      capability: cap_net_admin,cap_net_raw=ep
+      state: present
+    become: yes
+  when: dynamips_source is changed
+...

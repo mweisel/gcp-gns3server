@@ -1,0 +1,49 @@
+---
+- name: get and install
+  apt:
+    name: "{{ packages }}"
+    state: present
+  become: yes
+
+- name: check if ksm is enabled
+  command: cat /sys/kernel/mm/ksm/run
+  register: ksm
+  changed_when: (ksm.stdout | int) != 1
+
+- name: enable ksm (runtime)
+  shell: echo 1 > /sys/kernel/mm/ksm/run
+  when: ksm is changed
+  become: yes
+
+- name: enable ksm (persistent)
+  lineinfile:
+    path: /etc/sysfs.d/kernel.conf
+    line: 'kernel/mm/ksm/run = 1'
+    create: yes
+  when: ksm is changed
+  become: yes
+
+- name: get kvm halt polling interval value
+  command: cat /sys/module/kvm/parameters/halt_poll_ns 
+  register: halt_poll_ns
+  changed_when: (halt_poll_ns.stdout | int) != 0
+
+- block:
+  - name: reduce kvm halt polling interval (runtime)
+    shell: echo 0 > /sys/module/kvm/parameters/halt_poll_ns
+
+  - name: reduce kvm halt polling interval (persistent)
+    lineinfile:
+      path: /etc/sysfs.d/kvm.conf
+      line: 'module/kvm/parameters/halt_poll_ns = 0'
+      create: yes
+  become: yes
+  when: halt_poll_ns is changed
+
+- name: add gns3 user to kvm system group
+  user:
+    name: gns3
+    groups: kvm
+    append: yes
+  become: yes
+...

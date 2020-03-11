@@ -1,0 +1,54 @@
+---
+### PROJECT and ZONE ###
+
+# https://console.cloud.google.com/iam-admin/settings/project
+# `gcloud config get-value project`
+gcp_project_id:
+# https://cloud.google.com/compute/docs/regions-zones
+# `gcloud compute zones list`
+gcp_zone:
+
+
+### STORAGE ###
+
+#gcp_disk_size: 30
+#gcp_disk_type: pd-standard
+
+
+### COMPUTE ###
+
+# https://cloud.google.com/compute/vm-instance-pricing
+#gcp_vm_type: f1-micro
+
+
+### GNS3 ###
+
+# https://github.com/GNS3/gns3-server/releases
+gns3_version:
+
+
+### DUCKDNS ###
+
+# https://www.duckdns.org
+ddns_domain:
+ddns_token:
+
+
+### WIREGUARD ###
+
+wireguard_peer_pubkey:
+
+
+### DEFAULTS ###
+
+src_dir: "{{ ansible_env.HOME }}/src"
+gcp_cred_kind: serviceaccount
+gcp_cred_file_dir: "{{ lookup('env','HOME') }}/.gcred"
+gcp_cred_file: ansible-gns3-key.json
+gcp_svc_acct_id: ansible-gns3
+gcp_role: editor
+
+gcp_fr_name: default-allow-wireguard
+gcp_disk_name: gns3-disk
+gcp_vm_name: gns3server
+...

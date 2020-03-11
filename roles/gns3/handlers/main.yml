@@ -1,0 +1,9 @@
+---
+- name: restart gns3
+  systemd:
+    name: gns3
+    enabled: yes
+    daemon_reload: yes
+    state: restarted
+  become: yes
+...
