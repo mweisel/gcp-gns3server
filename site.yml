@@ -18,7 +18,7 @@
   pre_tasks:
     - name: update apt cache
       apt:
-        cache_valid_time: 3600
+        update_cache: yes
       register: apt_result
       until: apt_result is success
       ignore_errors: yes
