@@ -16,6 +16,10 @@
     - vars.yml
 
   pre_tasks:
+    - name: pause before updating apt cache
+      pause:
+        seconds: 15
+        
     - name: update apt cache
       apt:
         update_cache: yes
