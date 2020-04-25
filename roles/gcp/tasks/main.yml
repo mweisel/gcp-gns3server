@@ -43,6 +43,10 @@
           type: ONE_TO_ONE_NAT
     scheduling:
       preemptible: "{{ gcp_vm_preemptible }}"
+    service_accounts:
+      - email: "{{ gcp_svc_acct_id }}@{{ gcp_project_id }}.iam.gserviceaccount.com"
+        scopes:
+          - https://www.googleapis.com/auth/cloud-platform
     tags:
       items:
         - "{{ gcp_tag }}"
