@@ -10,18 +10,17 @@
   register: ksm
   changed_when: (ksm.stdout | int) != 1
 
-- name: enable ksm (runtime)
-  shell: echo 1 > /sys/kernel/mm/ksm/run
-  when: ksm is changed
-  become: yes
+- block:
+  - name: enable ksm (runtime)
+    shell: echo 1 > /sys/kernel/mm/ksm/run
 
-- name: enable ksm (persistent)
-  lineinfile:
-    path: /etc/sysfs.d/kernel.conf
-    line: 'kernel/mm/ksm/run = 1'
-    create: yes
-  when: ksm is changed
+  - name: enable ksm (persistent)
+    lineinfile:
+      path: /etc/sysfs.d/kernel.conf
+      line: 'kernel/mm/ksm/run = 1'
+      create: yes
   become: yes
+  when: ksm is changed
 
 - name: get kvm halt polling interval value
   command: cat /sys/module/kvm/parameters/halt_poll_ns 
