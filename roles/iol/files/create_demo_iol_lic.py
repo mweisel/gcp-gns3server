@@ -16,8 +16,7 @@ iouPad2 = b'\x80' + 39*b'\0'
 md5input = iouPad1 + iouPad2 + struct.pack('!L', ioukey) + iouPad1
 iouLicense = hashlib.md5(md5input).hexdigest()[:16]
 
-home = os.path.expanduser('~')
-fpath = os.path.join(home, 'iourc')
+fpath = '/opt/gns3/iourc'
 with open(fpath, 'wt') as f:
     f.write('[license]\n')
     f.write(hostname + ' = ' + iouLicense + ';\n')

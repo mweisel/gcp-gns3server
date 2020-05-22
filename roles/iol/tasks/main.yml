@@ -1,7 +1,7 @@
 ---
 - name: install libssl
   apt:
-    name: libssl1.0.0:i386
+    name: libssl1.1:i386
     state: present
   become: yes
 
@@ -34,5 +34,11 @@
     executable: python3
     creates: /opt/gns3/iourc
   become: yes
-  become_user: gns3
+
+- name: change file ownership for demo iol license file
+  file:
+    path: /opt/gns3/iourc
+    owner: gns3
+    group: gns3
+  become: yes
 ...

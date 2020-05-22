@@ -1,17 +1,4 @@
 ---
-- name: get and install dependencies
-  apt:
-    name: "{{ wireguard_dep_packages }}"
-    state: present
-  become: yes
-
-- name: add wireguard apt repository
-  apt_repository:
-    repo: "ppa:wireguard/wireguard"
-    state: present
-    update_cache: yes
-  become: yes
-
 - name: get and install
   package:
     name: "{{ wireguard_packages }}"
