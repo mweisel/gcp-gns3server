@@ -1,5 +1,6 @@
 ---
 packages:
+  - apt-utils
   - libc6-dev-i386
   - gcc-multilib
   - libelf-dev:i386
